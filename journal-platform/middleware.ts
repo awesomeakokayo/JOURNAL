@@ -1,26 +1,23 @@
-import { auth } from "@/lib/auth";
 import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
-export default auth((req) => {
+export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
-  const isLoggedIn = !!req.auth?.user;
+  const token = req.cookies.get("authjs.session-token")?.value;
 
-  // Allow admin login page (uses separate JWT flow)
   if (pathname === "/admin/login") {
     return NextResponse.next();
   }
 
-  // Protect admin routes
-  if (pathname.startsWith("/admin") && !isLoggedIn) {
+  if (pathname.startsWith("/admin") && !token) {
     const loginUrl = new URL("/login", req.url);
     loginUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(loginUrl);
   }
 
-  // Protect dashboard and submit
   if (
     (pathname.startsWith("/dashboard") || pathname.startsWith("/submit")) &&
-    !isLoggedIn
+    !token
   ) {
     const loginUrl = new URL("/login", req.url);
     loginUrl.searchParams.set("callbackUrl", pathname);
@@ -28,7 +25,7 @@ export default auth((req) => {
   }
 
   return NextResponse.next();
-});
+}
 
 export const config = {
   matcher: ["/dashboard/:path*", "/submit/:path*", "/admin/:path*"],
