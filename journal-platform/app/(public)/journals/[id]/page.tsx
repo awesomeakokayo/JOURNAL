@@ -3,9 +3,13 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 
 async function getJournal(id: string) {
-  const journal = await prisma.journal.findUnique({ where: { id } });
-  if (!journal) notFound();
-  return journal;
+  try {
+    const journal = await prisma.journal.findUnique({ where: { id } });
+    if (!journal) notFound();
+    return journal;
+  } catch {
+    notFound();
+  }
 }
 
 export default async function JournalDetailPage(props: {

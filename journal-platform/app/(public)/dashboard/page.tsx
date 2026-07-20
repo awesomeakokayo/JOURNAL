@@ -3,10 +3,14 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 
 async function getSubmissions(userId: string) {
-  return prisma.submission.findMany({
-    where: { submittedById: userId },
-    orderBy: { submittedAt: "desc" },
-  });
+  try {
+    return await prisma.submission.findMany({
+      where: { submittedById: userId },
+      orderBy: { submittedAt: "desc" },
+    });
+  } catch {
+    return [];
+  }
 }
 
 export default async function DashboardPage() {

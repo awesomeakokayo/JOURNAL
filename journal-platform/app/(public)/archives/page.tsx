@@ -3,19 +3,23 @@ import { prisma } from "@/lib/prisma";
 import { CATEGORIES } from "@/lib/journal-types";
 
 async function getJournalsByCategory() {
-  const journals = await prisma.journal.findMany({
-    orderBy: { uploadDate: "desc" },
-    take: 500,
-  });
+  try {
+    const journals = await prisma.journal.findMany({
+      orderBy: { uploadDate: "desc" },
+      take: 500,
+    });
 
-  const grouped: Record<string, typeof journals> = {};
-  for (const j of journals) {
-    const cat = j.category || "Others";
-    if (!grouped[cat]) grouped[cat] = [];
-    grouped[cat].push(j);
+    const grouped: Record<string, typeof journals> = {};
+    for (const j of journals) {
+      const cat = j.category || "Others";
+      if (!grouped[cat]) grouped[cat] = [];
+      grouped[cat].push(j);
+    }
+
+    return grouped;
+  } catch {
+    return {};
   }
-
-  return grouped;
 }
 
 export default async function ArchivesPage() {

@@ -7,42 +7,51 @@ async function getJournals(searchParams: {
   category?: string;
   page?: string;
 }) {
-  const q = searchParams.q?.trim();
-  const category = searchParams.category?.trim();
-  const page = parseInt(searchParams.page || "1");
-  const limit = 20;
-  const skip = (page - 1) * limit;
+  try {
+    const q = searchParams.q?.trim();
+    const category = searchParams.category?.trim();
+    const page = parseInt(searchParams.page || "1");
+    const limit = 20;
+    const skip = (page - 1) * limit;
 
-  const where: Record<string, unknown> = {};
+    const where: Record<string, unknown> = {};
 
-  if (q) {
-    where.OR = [
-      { title: { contains: q, mode: "insensitive" } },
-      { authors: { contains: q, mode: "insensitive" } },
-      { abstract: { contains: q, mode: "insensitive" } },
-    ];
+    if (q) {
+      where.OR = [
+        { title: { contains: q, mode: "insensitive" } },
+        { authors: { contains: q, mode: "insensitive" } },
+        { abstract: { contains: q, mode: "insensitive" } },
+      ];
+    }
+
+    if (category && CATEGORIES.includes(category as (typeof CATEGORIES)[number])) {
+      where.category = category;
+    }
+
+    const [journals, total] = await Promise.all([
+      prisma.journal.findMany({
+        where,
+        orderBy: { uploadDate: "desc" },
+        skip,
+        take: limit,
+      }),
+      prisma.journal.count({ where }),
+    ]);
+
+    return {
+      journals,
+      pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+      q: q || "",
+      selectedCategory: category || "",
+    };
+  } catch {
+    return {
+      journals: [],
+      pagination: { page: 1, limit: 20, total: 0, totalPages: 0 },
+      q: searchParams.q?.trim() || "",
+      selectedCategory: searchParams.category?.trim() || "",
+    };
   }
-
-  if (category && CATEGORIES.includes(category as (typeof CATEGORIES)[number])) {
-    where.category = category;
-  }
-
-  const [journals, total] = await Promise.all([
-    prisma.journal.findMany({
-      where,
-      orderBy: { uploadDate: "desc" },
-      skip,
-      take: limit,
-    }),
-    prisma.journal.count({ where }),
-  ]);
-
-  return {
-    journals,
-    pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
-    q: q || "",
-    selectedCategory: category || "",
-  };
 }
 
 export default async function CurrentPage(props: {
