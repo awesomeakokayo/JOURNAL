@@ -1,7 +1,17 @@
 import { PrismaClient } from "@prisma/client";
+import { PrismaNeonHttp } from "@prisma/adapter-neon";
 import bcrypt from "bcryptjs";
+import "dotenv/config";
 
-const prisma = new PrismaClient();
+function createPrisma() {
+  if (process.env.DATABASE_URL) {
+    const adapter = new PrismaNeonHttp(process.env.DATABASE_URL, {});
+    return new PrismaClient({ adapter });
+  }
+  return new PrismaClient();
+}
+
+const prisma = createPrisma();
 
 async function main() {
   const adminEmail = process.env.ADMIN_EMAIL || "admin@ccu.edu.ng";
