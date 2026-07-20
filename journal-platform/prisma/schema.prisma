@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id              String    @id @default(cuid())
+  fullName        String
+  email           String    @unique
+  passwordHash    String
+  isAdmin         Int       @default(0)
+  createdAt       DateTime  @default(now())
+
+  submissions     Submission[] @relation("UserSubmissions")
+  journals        Journal[]   @relation("UserJournals")
+}
+
+model Submission {
+  id                String    @id @default(cuid())
+  title             String
+  authors           String
+  abstract          String?   @db.Text
+  filePath          String
+  originalFilename  String?
+  category          String?
+  status            String    @default("pending")
+  submittedById     String
+  submittedBy       User      @relation("UserSubmissions", fields: [submittedById], references: [id])
+  submittedAt       DateTime  @default(now())
+  reviewedById      String?
+  reviewedAt        DateTime?
+
+  @@index([status])
+  @@index([submittedById])
+}
+
+model Journal {
+  id                String    @id @default(cuid())
+  title             String
+  authors           String
+  abstract          String?   @db.Text
+  filePath          String
+  originalFilename  String?
+  category          String?
+  uploadedById      String?
+  uploadedBy        User?     @relation("UserJournals", fields: [uploadedById], references: [id])
+  uploadDate        DateTime  @default(now())
+  submissionId      String?
+
+  @@index([category])
+}
