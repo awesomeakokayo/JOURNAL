@@ -4,7 +4,9 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Coal City University Journal of Education",
   description: "Academic journal of Coal City University, Enugu",
-  icons: [{ rel: "icon", url: "/CCULOGO.png" }],
+  icons: {
+    icon: "/CCULOGO.png",
+  },
 };
 
 export default function RootLayout({

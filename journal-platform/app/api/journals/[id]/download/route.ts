@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getDownloadUrl } from "@vercel/blob";
+import { get } from "@vercel/blob";
 
 export async function GET(
   _req: NextRequest,
@@ -14,10 +14,9 @@ export async function GET(
       return NextResponse.json({ error: "Journal not found" }, { status: 404 });
     }
 
-    const url = getDownloadUrl(journal.filePath);
+    const result = await get(journal.filePath, { access: "private" });
 
-    const response = await fetch(url);
-    if (!response.ok) {
+    if (!result || result.statusCode !== 200 || !result.stream) {
       return NextResponse.json(
         { error: "Failed to fetch file" },
         { status: 500 }
@@ -26,9 +25,9 @@ export async function GET(
 
     const fileName = journal.originalFilename || "journal.pdf";
 
-    return new NextResponse(response.body, {
+    return new NextResponse(result.stream, {
       headers: {
-        "Content-Type": response.headers.get("Content-Type") || "application/pdf",
+        "Content-Type": result.blob.contentType || "application/pdf",
         "Content-Disposition": `inline; filename="${fileName}"`,
         "Cache-Control": "public, max-age=3600",
       },

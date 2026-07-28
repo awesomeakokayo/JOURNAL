@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
-import { getDownloadUrl } from "@vercel/blob";
+import { get } from "@vercel/blob";
 import jwt from "jsonwebtoken";
 
 async function getAdminFromRequest(req: NextRequest) {
@@ -43,10 +43,9 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const url = getDownloadUrl(submission.filePath);
+    const result = await get(submission.filePath, { access: "private" });
 
-    const response = await fetch(url);
-    if (!response.ok) {
+    if (!result || result.statusCode !== 200 || !result.stream) {
       return NextResponse.json(
         { error: "Failed to fetch file" },
         { status: 500 }
@@ -55,9 +54,9 @@ export async function GET(
 
     const fileName = submission.originalFilename || "submission.pdf";
 
-    return new NextResponse(response.body, {
+    return new NextResponse(result.stream, {
       headers: {
-        "Content-Type": response.headers.get("Content-Type") || "application/pdf",
+        "Content-Type": result.blob.contentType || "application/pdf",
         "Content-Disposition": `inline; filename="${fileName}"`,
         "Cache-Control": "public, max-age=3600",
       },
