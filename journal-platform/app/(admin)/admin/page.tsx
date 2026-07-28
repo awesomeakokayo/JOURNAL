@@ -15,6 +15,15 @@ interface Submission {
   submittedAt: string;
 }
 
+interface PublishedJournal {
+  id: string;
+  title: string;
+  authors: string;
+  volume: string | null;
+  originalFilename: string | null;
+  uploadDate: string;
+}
+
 function authHeaders(): Record<string, string> {
   const headers: Record<string, string> = {};
   const token = localStorage.getItem("admin_token");
@@ -25,6 +34,7 @@ function authHeaders(): Record<string, string> {
 export default function AdminDashboardPage() {
   const router = useRouter();
   const [submissions, setSubmissions] = useState<Submission[]>([]);
+  const [journals, setJournals] = useState<PublishedJournal[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("pending");
 
@@ -49,14 +59,36 @@ export default function AdminDashboardPage() {
     [router]
   );
 
+  const fetchJournals = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/admin/journals?status=published", {
+        headers: authHeaders(),
+      });
+      if (res.status === 401) {
+        router.push("/admin/login");
+        return;
+      }
+      const data = await res.json();
+      setJournals(data.journals || []);
+    } catch {
+      setJournals([]);
+    }
+    setLoading(false);
+  }, [router]);
+
   useEffect(() => {
     const token = localStorage.getItem("admin_token");
     if (!token) {
       router.push("/admin/login");
       return;
     }
-    fetchSubmissions(filter);
-  }, [filter, fetchSubmissions, router]);
+    if (filter === "published") {
+      fetchJournals();
+    } else {
+      fetchSubmissions(filter);
+    }
+  }, [filter, fetchSubmissions, fetchJournals, router]);
 
   async function handleApprove(id: string) {
     const res = await fetch(`/api/admin/journals/${id}`, {
@@ -90,13 +122,17 @@ export default function AdminDashboardPage() {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("Delete this submission permanently?")) return;
+    if (!confirm("Delete this permanently?")) return;
     const res = await fetch(`/api/admin/journals/${id}`, {
       method: "DELETE",
       headers: authHeaders(),
     });
     if (res.ok) {
-      fetchSubmissions(filter);
+      if (filter === "published") {
+        fetchJournals();
+      } else {
+        fetchSubmissions(filter);
+      }
     } else {
       const data = await res.json();
       alert(data.error || "Delete failed");
@@ -106,11 +142,11 @@ export default function AdminDashboardPage() {
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 md:py-12">
       <h1 className="font-serif text-2xl md:text-3xl font-bold text-primary mb-8">
-        Submission Queue
+        {filter === "published" ? "Published Journals" : "Submission Queue"}
       </h1>
 
-      <div className="flex gap-2 mb-6">
-        {["pending", "approved", "rejected"].map((s) => (
+      <div className="flex flex-wrap gap-2 mb-6">
+        {["pending", "approved", "rejected", "published"].map((s) => (
           <button
             key={s}
             onClick={() => setFilter(s)}
@@ -127,6 +163,63 @@ export default function AdminDashboardPage() {
 
       {loading ? (
         <p className="text-text-muted text-center py-8">Loading...</p>
+      ) : filter === "published" ? (
+        journals.length === 0 ? (
+          <div className="text-center py-16 bg-surface rounded border border-gray-200">
+            <p className="text-text-muted text-lg">No published journals found.</p>
+          </div>
+        ) : (
+          <div className="grid gap-4">
+            {journals.map((j) => (
+              <div
+                key={j.id}
+                className="bg-surface rounded-lg border border-gray-200 p-5"
+              >
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between">
+                  <div className="flex-1">
+                    <h2 className="font-serif text-lg font-semibold text-primary">
+                      {j.title}
+                    </h2>
+                    <p className="text-text-muted text-sm">{j.authors}</p>
+                    {j.volume && (
+                      <span className="inline-block mt-2 bg-primary/10 text-primary px-3 py-0.5 rounded-full text-xs font-medium">
+                        {j.volume}
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2 mt-3 sm:mt-0">
+                    <button
+                      onClick={() => {
+                        const token = localStorage.getItem("admin_token");
+                        window.open(
+                          `/api/journals/${j.id}/download?token=${token}`,
+                          "_blank"
+                        );
+                      }}
+                      className="text-primary underline text-xs hover:text-primary-light cursor-pointer"
+                    >
+                      Download
+                    </button>
+                    <button
+                      onClick={() => handleDelete(j.id)}
+                      className="text-danger underline text-xs hover:opacity-80 cursor-pointer"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+                <p className="text-text-muted text-xs mt-3">
+                  Published{" "}
+                  {new Date(j.uploadDate).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                </p>
+              </div>
+            ))}
+          </div>
+        )
       ) : submissions.length === 0 ? (
         <div className="text-center py-16 bg-surface rounded border border-gray-200">
           <p className="text-text-muted text-lg">

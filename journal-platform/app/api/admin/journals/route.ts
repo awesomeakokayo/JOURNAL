@@ -18,6 +18,21 @@ export async function GET(req: NextRequest) {
     const limit = Math.min(parseInt(searchParams.get("limit") || "50"), 100);
     const skip = (page - 1) * limit;
 
+    if (status === "published") {
+      const [journals, total] = await Promise.all([
+        prisma.journal.findMany({
+          orderBy: { uploadDate: "desc" },
+          skip,
+          take: limit,
+        }),
+        prisma.journal.count(),
+      ]);
+      return NextResponse.json({
+        journals,
+        pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+      });
+    }
+
     const where: Record<string, unknown> = {};
     if (status) where.status = status;
 
