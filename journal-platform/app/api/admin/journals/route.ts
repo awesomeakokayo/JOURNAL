@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getAdminFromRequest } from "@/lib/admin-auth";
-import { put } from "@vercel/blob";
+import { put, issueSignedToken, presignUrl } from "@vercel/blob";
 import { submitSchema } from "@/lib/validation";
+
+function extractPathname(blobUrl: string): string {
+  return new URL(blobUrl).pathname.slice(1);
+}
 
 export async function GET(req: NextRequest) {
   try {
@@ -31,8 +35,30 @@ export async function GET(req: NextRequest) {
       prisma.submission.count({ where }),
     ]);
 
+    if (submissions.length === 0) {
+      return NextResponse.json({
+        submissions: [],
+        pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+      });
+    }
+
+    const signedToken = await issueSignedToken({
+      operations: ["get"],
+    });
+
+    const submissionsWithSignedUrls = await Promise.all(
+      submissions.map((s) => {
+        const pathname = extractPathname(s.filePath);
+        return presignUrl(signedToken, {
+          access: "private",
+          operation: "get",
+          pathname,
+        }).then(({ presignedUrl }) => ({ ...s, filePath: presignedUrl }));
+      })
+    );
+
     return NextResponse.json({
-      submissions,
+      submissions: submissionsWithSignedUrls,
       pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
     });
   } catch {
@@ -89,7 +115,7 @@ export async function POST(req: NextRequest) {
 
     const fileName = `${crypto.randomUUID()}.pdf`;
     const blob = await put(`journals/${fileName}`, file, {
-      access: "public",
+      access: "private",
     });
 
     const journal = await prisma.journal.create({

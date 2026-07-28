@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { issueSignedToken, presignUrl } from "@vercel/blob";
+
+function extractPathname(blobUrl: string): string {
+  return new URL(blobUrl).pathname.slice(1);
+}
 
 export async function GET(
   _req: Request,
@@ -13,7 +18,17 @@ export async function GET(
       return NextResponse.json({ error: "Journal not found" }, { status: 404 });
     }
 
-    return NextResponse.redirect(journal.filePath);
+    const pathname = extractPathname(journal.filePath);
+    const signedToken = await issueSignedToken({
+      pathname,
+      operations: ["get"],
+    });
+    const { presignedUrl } = await presignUrl(signedToken, {
+      access: "private",
+      operation: "get",
+      pathname,
+    });
+    return NextResponse.redirect(presignedUrl);
   } catch {
     return NextResponse.json(
       { error: "Download failed" },
