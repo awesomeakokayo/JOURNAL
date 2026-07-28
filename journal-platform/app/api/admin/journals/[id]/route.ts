@@ -124,24 +124,35 @@ export async function DELETE(
     }
 
     const { id } = await params;
+
+    // Try deleting as a journal first
     const journal = await prisma.journal.findUnique({ where: { id } });
-
-    if (!journal) {
-      return NextResponse.json({ error: "Journal not found" }, { status: 404 });
+    if (journal) {
+      try {
+        await del(journal.filePath);
+      } catch {
+        // blob delete failure is non-fatal
+      }
+      await prisma.journal.delete({ where: { id } });
+      return NextResponse.json({ success: true });
     }
 
-    try {
-      await del(journal.filePath);
-    } catch {
-      // blob delete failure is non-fatal
+    // Try deleting as a submission
+    const submission = await prisma.submission.findUnique({ where: { id } });
+    if (submission) {
+      try {
+        await del(submission.filePath);
+      } catch {
+        // blob delete failure is non-fatal
+      }
+      await prisma.submission.delete({ where: { id } });
+      return NextResponse.json({ success: true });
     }
 
-    await prisma.journal.delete({ where: { id } });
-
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
   } catch {
     return NextResponse.json(
-      { error: "Failed to delete journal" },
+      { error: "Failed to delete" },
       { status: 500 }
     );
   }

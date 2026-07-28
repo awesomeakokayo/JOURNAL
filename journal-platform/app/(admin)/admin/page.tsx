@@ -89,6 +89,20 @@ export default function AdminDashboardPage() {
     }
   }
 
+  async function handleDelete(id: string) {
+    if (!confirm("Delete this submission permanently?")) return;
+    const res = await fetch(`/api/admin/journals/${id}`, {
+      method: "DELETE",
+      headers: authHeaders(),
+    });
+    if (res.ok) {
+      fetchSubmissions(filter);
+    } else {
+      const data = await res.json();
+      alert(data.error || "Delete failed");
+    }
+  }
+
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 md:py-12">
       <h1 className="font-serif text-2xl md:text-3xl font-bold text-primary mb-8">
@@ -169,6 +183,12 @@ export default function AdminDashboardPage() {
                     className="text-primary underline text-xs hover:text-primary-light cursor-pointer"
                   >
                     Download
+                  </button>
+                  <button
+                    onClick={() => handleDelete(s.id)}
+                    className="text-danger underline text-xs hover:opacity-80 cursor-pointer"
+                  >
+                    Delete
                   </button>
                 </div>
               </div>
