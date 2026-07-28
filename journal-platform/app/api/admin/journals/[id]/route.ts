@@ -48,7 +48,7 @@ export async function PATCH(
       try {
         const response = await fetch(submission.filePath);
         if (response.ok) {
-          const fileBuffer = await response.arrayBuffer();
+          const fileBuffer = Buffer.from(await response.arrayBuffer());
           const blob = await put(journalFilePath, fileBuffer, {
             access: "public",
           });
