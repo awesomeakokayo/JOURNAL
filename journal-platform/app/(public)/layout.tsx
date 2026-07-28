@@ -15,8 +15,13 @@ export default async function PublicLayout({
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <Link
             href="/"
-            className="font-serif text-xl md:text-2xl font-bold tracking-tight"
+            className="flex items-center gap-3 font-serif text-xl md:text-2xl font-bold tracking-tight"
           >
+            <img
+              src="/CCULOGO.png"
+              alt="CCU Logo"
+              className="h-10 w-auto"
+            />
             CCU Journal of Education
           </Link>
           <nav className="flex items-center gap-4 text-sm md:text-base">

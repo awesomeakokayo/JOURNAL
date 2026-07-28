@@ -1,13 +1,9 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { issueSignedToken, presignUrl } from "@vercel/blob";
-
-function extractPathname(blobUrl: string): string {
-  return new URL(blobUrl).pathname.slice(1);
-}
+import { getDownloadUrl } from "@vercel/blob";
 
 export async function GET(
-  _req: Request,
+  _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -18,17 +14,25 @@ export async function GET(
       return NextResponse.json({ error: "Journal not found" }, { status: 404 });
     }
 
-    const pathname = extractPathname(journal.filePath);
-    const signedToken = await issueSignedToken({
-      pathname,
-      operations: ["get"],
+    const url = getDownloadUrl(journal.filePath);
+
+    const response = await fetch(url);
+    if (!response.ok) {
+      return NextResponse.json(
+        { error: "Failed to fetch file" },
+        { status: 500 }
+      );
+    }
+
+    const fileName = journal.originalFilename || "journal.pdf";
+
+    return new NextResponse(response.body, {
+      headers: {
+        "Content-Type": response.headers.get("Content-Type") || "application/pdf",
+        "Content-Disposition": `inline; filename="${fileName}"`,
+        "Cache-Control": "public, max-age=3600",
+      },
     });
-    const { presignedUrl } = await presignUrl(signedToken, {
-      access: "private",
-      operation: "get",
-      pathname,
-    });
-    return NextResponse.redirect(presignedUrl);
   } catch {
     return NextResponse.json(
       { error: "Download failed" },

@@ -1,29 +1,12 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { issueSignedToken, presignUrl } from "@vercel/blob";
-
-function extractPathname(blobUrl: string): string {
-  return new URL(blobUrl).pathname.slice(1);
-}
 
 async function getJournal(id: string) {
   try {
     const journal = await prisma.journal.findUnique({ where: { id } });
     if (!journal) notFound();
-
-    const pathname = extractPathname(journal.filePath);
-    const signedToken = await issueSignedToken({
-      pathname,
-      operations: ["get"],
-    });
-    const { presignedUrl } = await presignUrl(signedToken, {
-      access: "private",
-      operation: "get",
-      pathname,
-    });
-
-    return { ...journal, signedUrl: presignedUrl };
+    return journal;
   } catch {
     notFound();
   }
@@ -67,9 +50,7 @@ export default async function JournalDetailPage(props: {
 
         <div className="flex items-center gap-4 pt-6 border-t border-gray-200">
           <a
-            href={journal.signedUrl}
-            target="_blank"
-            rel="noopener noreferrer"
+            href={`/api/journals/${journal.id}/download`}
             className="inline-flex items-center gap-2 bg-accent text-primary font-semibold px-6 py-2.5 rounded hover:bg-accent-light transition-colors"
           >
             <svg
@@ -88,9 +69,7 @@ export default async function JournalDetailPage(props: {
             Download PDF
           </a>
           <a
-            href={journal.signedUrl}
-            target="_blank"
-            rel="noopener noreferrer"
+            href={`/api/journals/${journal.id}/download`}
             className="text-primary underline underline-offset-2 hover:text-primary-light text-sm"
           >
             View Online

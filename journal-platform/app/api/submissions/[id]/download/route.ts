@@ -1,12 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
-import { issueSignedToken, presignUrl } from "@vercel/blob";
+import { getDownloadUrl } from "@vercel/blob";
 import jwt from "jsonwebtoken";
-
-function extractPathname(blobUrl: string): string {
-  return new URL(blobUrl).pathname.slice(1);
-}
 
 async function getAdminFromRequest(req: NextRequest) {
   const token =
@@ -47,17 +43,25 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const pathname = extractPathname(submission.filePath);
-    const signedToken = await issueSignedToken({
-      pathname,
-      operations: ["get"],
+    const url = getDownloadUrl(submission.filePath);
+
+    const response = await fetch(url);
+    if (!response.ok) {
+      return NextResponse.json(
+        { error: "Failed to fetch file" },
+        { status: 500 }
+      );
+    }
+
+    const fileName = submission.originalFilename || "submission.pdf";
+
+    return new NextResponse(response.body, {
+      headers: {
+        "Content-Type": response.headers.get("Content-Type") || "application/pdf",
+        "Content-Disposition": `inline; filename="${fileName}"`,
+        "Cache-Control": "public, max-age=3600",
+      },
     });
-    const { presignedUrl } = await presignUrl(signedToken, {
-      access: "private",
-      operation: "get",
-      pathname,
-    });
-    return NextResponse.redirect(presignedUrl);
   } catch {
     return NextResponse.json(
       { error: "Download failed" },

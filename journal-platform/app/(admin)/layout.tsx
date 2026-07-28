@@ -11,8 +11,13 @@ export default function AdminLayout({
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <Link
             href="/admin"
-            className="font-serif text-xl font-bold tracking-tight"
+            className="flex items-center gap-3 font-serif text-xl font-bold tracking-tight"
           >
+            <img
+              src="/CCULOGO.png"
+              alt="CCU Logo"
+              className="h-8 w-auto"
+            />
             CCU Journal — Admin
           </Link>
           <nav className="flex items-center gap-4 text-sm">

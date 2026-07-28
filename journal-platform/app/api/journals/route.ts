@@ -1,12 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
-import { put, issueSignedToken, presignUrl } from "@vercel/blob";
+import { put } from "@vercel/blob";
 import { submitSchema } from "@/lib/validation";
-
-function extractPathname(blobUrl: string): string {
-  return new URL(blobUrl).pathname.slice(1);
-}
 
 export async function GET(req: NextRequest) {
   try {
@@ -53,23 +49,8 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    const signedToken = await issueSignedToken({
-      operations: ["get"],
-    });
-
-    const journalsWithSignedUrls = await Promise.all(
-      journals.map((j) => {
-        const pathname = extractPathname(j.filePath);
-        return presignUrl(signedToken, {
-          access: "private",
-          operation: "get",
-          pathname,
-        }).then(({ presignedUrl }) => ({ ...j, filePath: presignedUrl }));
-      })
-    );
-
     return NextResponse.json({
-      journals: journalsWithSignedUrls,
+      journals,
       pagination: {
         page,
         limit,
