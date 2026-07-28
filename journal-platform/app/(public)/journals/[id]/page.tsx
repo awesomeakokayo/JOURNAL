@@ -33,9 +33,9 @@ export default async function JournalDetailPage(props: {
         </h1>
         <p className="text-text-muted text-lg mb-4">{journal.authors}</p>
 
-        {journal.category && (
+        {journal.volume && (
           <span className="inline-block bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium mb-6">
-            {journal.category}
+            {journal.volume}
           </span>
         )}
 

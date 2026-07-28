@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
       title: formData.get("title"),
       authors: formData.get("authors"),
       abstract: formData.get("abstract"),
-      category: formData.get("category"),
+      volume: formData.get("volume") || undefined,
     });
 
     if (!parsed.success) {
@@ -85,7 +85,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { title, authors, abstract, category } = parsed.data;
+    const { title, authors, abstract, volume } = parsed.data;
 
     const fileName = `${crypto.randomUUID()}.pdf`;
     const blob = await put(`journals/${fileName}`, file, {
@@ -99,14 +99,14 @@ export async function POST(req: NextRequest) {
         abstract,
         filePath: blob.url,
         originalFilename: file.name,
-        category,
+        volume: volume || null,
       },
     });
 
     return NextResponse.json(journal, { status: 201 });
-  } catch {
+  } catch (err) {
     return NextResponse.json(
-      { error: "Upload failed" },
+      { error: err instanceof Error ? err.message : "Upload failed" },
       { status: 500 }
     );
   }

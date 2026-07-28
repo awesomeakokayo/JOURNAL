@@ -68,7 +68,7 @@ export async function PATCH(
           abstract: submission.abstract,
           filePath: blobUrl,
           originalFilename: submission.originalFilename,
-          category: submission.category,
+          volume: submission.volume,
           submissionId: submission.id,
         },
       });

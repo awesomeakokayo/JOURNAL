@@ -7,7 +7,7 @@ interface Submission {
   id: string;
   title: string;
   authors: string;
-  category: string | null;
+  volume: string | null;
   status: string;
   filePath: string;
   originalFilename: string | null;
@@ -135,9 +135,9 @@ export default function AdminDashboardPage() {
                   <p className="text-text-muted text-xs mt-1">
                     by {s.submittedBy.fullName} ({s.submittedBy.email})
                   </p>
-                  {s.category && (
+                  {s.volume && (
                     <span className="inline-block mt-2 bg-primary/10 text-primary px-3 py-0.5 rounded-full text-xs font-medium">
-                      {s.category}
+                      {s.volume}
                     </span>
                   )}
                 </div>

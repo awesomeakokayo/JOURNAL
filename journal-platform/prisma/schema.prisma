@@ -25,7 +25,7 @@ model Submission {
   abstract          String?   @db.Text
   filePath          String
   originalFilename  String?
-  category          String?
+  volume            String?
   status            String    @default("pending")
   submittedById     String
   submittedBy       User      @relation("UserSubmissions", fields: [submittedById], references: [id])
@@ -44,11 +44,9 @@ model Journal {
   abstract          String?   @db.Text
   filePath          String
   originalFilename  String?
-  category          String?
+  volume            String?
   uploadedById      String?
   uploadedBy        User?     @relation("UserJournals", fields: [uploadedById], references: [id])
   uploadDate        DateTime  @default(now())
   submissionId      String?
-
-  @@index([category])
 }

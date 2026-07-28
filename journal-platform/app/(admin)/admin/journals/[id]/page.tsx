@@ -7,7 +7,7 @@ interface Journal {
   id: string;
   title: string;
   authors: string;
-  category: string | null;
+  volume: string | null;
   abstract: string | null;
   filePath: string;
   uploadDate: string;
@@ -90,9 +90,9 @@ export default function AdminJournalDetailPage() {
           {journal.title}
         </h1>
         <p className="text-text-muted text-lg mb-4">{journal.authors}</p>
-        {journal.category && (
+        {journal.volume && (
           <span className="inline-block bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium mb-6">
-            {journal.category}
+            {journal.volume}
           </span>
         )}
         {journal.abstract && (

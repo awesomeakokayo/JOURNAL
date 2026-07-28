@@ -1,8 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { CATEGORIES } from "@/lib/journal-types";
 
-async function getJournalsByCategory() {
+async function getJournalsByVolume() {
   try {
     const journals = await prisma.journal.findMany({
       orderBy: { uploadDate: "desc" },
@@ -11,9 +10,9 @@ async function getJournalsByCategory() {
 
     const grouped: Record<string, typeof journals> = {};
     for (const j of journals) {
-      const cat = j.category || "Others";
-      if (!grouped[cat]) grouped[cat] = [];
-      grouped[cat].push(j);
+      const vol = j.volume || "Uncategorized";
+      if (!grouped[vol]) grouped[vol] = [];
+      grouped[vol].push(j);
     }
 
     return grouped;
@@ -23,7 +22,7 @@ async function getJournalsByCategory() {
 }
 
 export default async function ArchivesPage() {
-  const grouped = await getJournalsByCategory();
+  const grouped = await getJournalsByVolume();
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-12">
@@ -37,16 +36,16 @@ export default async function ArchivesPage() {
         </div>
       ) : (
         <div className="grid gap-10">
-          {CATEGORIES.filter((cat) => grouped[cat]?.length > 0).map((cat) => (
-            <section key={cat}>
+          {Object.entries(grouped).map(([vol, journals]) => (
+            <section key={vol}>
               <h2 className="font-serif text-2xl font-semibold text-primary mb-4 border-b border-gray-200 pb-2">
-                {cat}
+                {vol}
                 <span className="text-text-muted text-base font-normal ml-2">
-                  ({grouped[cat].length} journals)
+                  ({journals.length} journal{journals.length !== 1 ? "s" : ""})
                 </span>
               </h2>
               <div className="grid gap-4">
-                {grouped[cat].map((j) => (
+                {journals.map((j) => (
                   <Link
                     key={j.id}
                     href={`/journals/${j.id}`}

@@ -1,15 +1,14 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { CATEGORIES } from "@/lib/journal-types";
 
 async function getJournals(searchParams: {
   q?: string;
-  category?: string;
+  volume?: string;
   page?: string;
 }) {
   try {
     const q = searchParams.q?.trim();
-    const category = searchParams.category?.trim();
+    const volume = searchParams.volume?.trim();
     const page = parseInt(searchParams.page || "1");
     const limit = 20;
     const skip = (page - 1) * limit;
@@ -24,8 +23,8 @@ async function getJournals(searchParams: {
       ];
     }
 
-    if (category && CATEGORIES.includes(category as (typeof CATEGORIES)[number])) {
-      where.category = category;
+    if (volume) {
+      where.volume = volume;
     }
 
     const [journals, total] = await Promise.all([
@@ -42,23 +41,23 @@ async function getJournals(searchParams: {
       journals,
       pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
       q: q || "",
-      selectedCategory: category || "",
+      selectedVolume: volume || "",
     };
   } catch {
     return {
       journals: [],
       pagination: { page: 1, limit: 20, total: 0, totalPages: 0 },
       q: searchParams.q?.trim() || "",
-      selectedCategory: searchParams.category?.trim() || "",
+      selectedVolume: searchParams.volume?.trim() || "",
     };
   }
 }
 
 export default async function CurrentPage(props: {
-  searchParams: Promise<{ q?: string; category?: string; page?: string }>;
+  searchParams: Promise<{ q?: string; volume?: string; page?: string }>;
 }) {
   const searchParams = await props.searchParams;
-  const { journals, pagination, q, selectedCategory } =
+  const { journals, pagination, q, selectedVolume } =
     await getJournals(searchParams);
 
   return (
@@ -67,7 +66,6 @@ export default async function CurrentPage(props: {
         Current Issue
       </h1>
 
-      {/* Search & Filter */}
       <form
         method="GET"
         action="/current"
@@ -80,18 +78,13 @@ export default async function CurrentPage(props: {
           placeholder="Search by title, author, or keyword..."
           className="flex-1 px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
         />
-        <select
-          name="category"
-          defaultValue={selectedCategory}
-          className="px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
-        >
-          <option value="">All Categories</option>
-          {CATEGORIES.map((cat) => (
-            <option key={cat} value={cat}>
-              {cat}
-            </option>
-          ))}
-        </select>
+        <input
+          type="text"
+          name="volume"
+          defaultValue={selectedVolume}
+          placeholder="Filter by volume (e.g., Vol. 1)"
+          className="w-full md:w-48 px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
+        />
         <button
           type="submit"
           className="bg-primary text-white font-semibold px-6 py-2.5 rounded hover:bg-primary-light transition-colors cursor-pointer"
@@ -100,7 +93,6 @@ export default async function CurrentPage(props: {
         </button>
       </form>
 
-      {/* Results */}
       {journals.length === 0 ? (
         <div className="text-center py-16 bg-surface rounded border border-gray-200">
           <p className="text-text-muted text-lg">No journals found.</p>
@@ -125,9 +117,9 @@ export default async function CurrentPage(props: {
                   </p>
                 )}
                 <div className="flex items-center gap-3 text-sm">
-                  {j.category && (
+                  {j.volume && (
                     <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-medium">
-                      {j.category}
+                      {j.volume}
                     </span>
                   )}
                   <span className="text-text-muted">
@@ -142,14 +134,13 @@ export default async function CurrentPage(props: {
             ))}
           </div>
 
-          {/* Pagination */}
           {pagination.totalPages > 1 && (
             <div className="flex justify-center gap-2 mt-8">
               {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map(
                 (p) => {
                   const params = new URLSearchParams();
                   if (q) params.set("q", q);
-                  if (selectedCategory) params.set("category", selectedCategory);
+                  if (selectedVolume) params.set("volume", selectedVolume);
                   params.set("page", String(p));
                   return (
                     <Link

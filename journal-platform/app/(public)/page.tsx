@@ -82,9 +82,9 @@ export default async function HomePage() {
                   </p>
                 )}
                 <div className="flex items-center gap-3 text-sm">
-                  {j.category && (
+                  {j.volume && (
                     <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-medium">
-                      {j.category}
+                      {j.volume}
                     </span>
                   )}
                   <span className="text-text-muted">

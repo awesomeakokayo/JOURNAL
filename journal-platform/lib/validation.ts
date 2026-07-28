@@ -20,7 +20,7 @@ export const submitSchema = z.object({
   title: z.string().min(2, "Title must be at least 2 characters"),
   authors: z.string().min(2, "Author(s) must be at least 2 characters"),
   abstract: z.string().min(10, "Abstract must be at least 10 characters"),
-  category: z.string().min(1, "Category is required"),
+  volume: z.string().optional(),
 });
 
 export const approvePublishSchema = z.object({

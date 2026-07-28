@@ -49,7 +49,7 @@ export default function AboutPage() {
             </li>
             <li>
               Each submission must include a title, author name(s), abstract,
-              and category.
+              and volume.
             </li>
             <li>
               All submissions undergo a peer review process.

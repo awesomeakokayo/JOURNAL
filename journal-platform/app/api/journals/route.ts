@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const q = searchParams.get("q");
-    const category = searchParams.get("category");
+    const volume = searchParams.get("volume");
     const page = parseInt(searchParams.get("page") || "1");
     const limit = Math.min(parseInt(searchParams.get("limit") || "20"), 50);
     const skip = (page - 1) * limit;
@@ -23,8 +23,8 @@ export async function GET(req: NextRequest) {
       ];
     }
 
-    if (category) {
-      where.category = category;
+    if (volume) {
+      where.volume = volume;
     }
 
     const [journals, total] = await Promise.all([
@@ -91,7 +91,7 @@ export async function POST(req: Request) {
       title: formData.get("title"),
       authors: formData.get("authors"),
       abstract: formData.get("abstract"),
-      category: formData.get("category"),
+      volume: formData.get("volume") || undefined,
     });
 
     if (!parsed.success) {
@@ -101,7 +101,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const { title, authors, abstract, category } = parsed.data;
+    const { title, authors, abstract, volume } = parsed.data;
 
     const ext = file.name.split(".").pop() || file.name.split(".").slice(-1)[0];
     const fileName = `${crypto.randomUUID()}.${ext}`;
@@ -116,16 +116,16 @@ export async function POST(req: Request) {
         abstract,
         filePath: blob.url,
         originalFilename: file.name,
-        category,
+        volume: volume || null,
         submittedById: session.user.id,
         status: "pending",
       },
     });
 
     return NextResponse.json(submission, { status: 201 });
-  } catch {
+  } catch (err) {
     return NextResponse.json(
-      { error: "Submission failed" },
+      { error: err instanceof Error ? err.message : "Submission failed" },
       { status: 500 }
     );
   }
