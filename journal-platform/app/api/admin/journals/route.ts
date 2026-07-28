@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getAdminFromRequest } from "@/lib/admin-auth";
 import { put } from "@vercel/blob";
 import { submitSchema } from "@/lib/validation";
+import { revalidatePath } from "next/cache";
 
 export async function GET(req: NextRequest) {
   try {
@@ -103,6 +104,9 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    revalidatePath("/");
+    revalidatePath("/current");
+    revalidatePath("/archives");
     return NextResponse.json(journal, { status: 201 });
   } catch (err) {
     return NextResponse.json(

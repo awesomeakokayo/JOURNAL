@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getAdminFromRequest } from "@/lib/admin-auth";
 import { put, del } from "@vercel/blob";
 import { approvePublishSchema } from "@/lib/validation";
+import { revalidatePath } from "next/cache";
 
 export async function PATCH(
   req: NextRequest,
@@ -81,6 +82,9 @@ export async function PATCH(
         },
       });
 
+      revalidatePath("/");
+      revalidatePath("/current");
+      revalidatePath("/archives");
       return NextResponse.json({ success: true });
     }
 
@@ -134,6 +138,9 @@ export async function DELETE(
         // blob delete failure is non-fatal
       }
       await prisma.journal.delete({ where: { id } });
+      revalidatePath("/");
+      revalidatePath("/current");
+      revalidatePath("/archives");
       return NextResponse.json({ success: true });
     }
 
