@@ -36,8 +36,8 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="max-w-md mx-auto px-4 py-16">
-      <h1 className="font-serif text-3xl font-bold text-primary text-center mb-8">
+    <div className="max-w-md mx-auto px-4 py-8 md:py-16">
+      <h1 className="font-serif text-2xl md:text-3xl font-bold text-primary text-center mb-8">
         Admin Login
       </h1>
 

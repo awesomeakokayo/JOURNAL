@@ -1,13 +1,13 @@
 export default function AboutPage() {
   return (
-    <div className="max-w-4xl mx-auto px-4 py-12">
-      <h1 className="font-serif text-3xl font-bold text-primary mb-8">
+    <div className="max-w-4xl mx-auto px-4 py-6 md:py-12">
+      <h1 className="font-serif text-2xl md:text-3xl font-bold text-primary mb-8">
         About the Journal
       </h1>
 
       <div className="prose max-w-none space-y-6 text-text">
-        <section className="bg-surface rounded-lg border border-gray-200 p-6">
-          <h2 className="font-serif text-xl font-semibold text-primary mb-3">
+        <section className="bg-surface rounded-lg border border-gray-200 p-4 md:p-6">
+          <h2 className="font-serif text-lg md:text-xl font-semibold text-primary mb-3">
             Coal City University Journal of Education
           </h2>
           <p className="mb-3">
@@ -25,8 +25,8 @@ export default function AboutPage() {
           </p>
         </section>
 
-        <section className="bg-surface rounded-lg border border-gray-200 p-6">
-          <h2 className="font-serif text-xl font-semibold text-primary mb-3">
+        <section className="bg-surface rounded-lg border border-gray-200 p-4 md:p-6">
+          <h2 className="font-serif text-lg md:text-xl font-semibold text-primary mb-3">
             Publication Frequency
           </h2>
           <p>
@@ -36,8 +36,8 @@ export default function AboutPage() {
           </p>
         </section>
 
-        <section className="bg-surface rounded-lg border border-gray-200 p-6">
-          <h2 className="font-serif text-xl font-semibold text-primary mb-3">
+        <section className="bg-surface rounded-lg border border-gray-200 p-4 md:p-6">
+          <h2 className="font-serif text-lg md:text-xl font-semibold text-primary mb-3">
             Submission Guidelines
           </h2>
           <ul className="list-disc pl-5 space-y-2">
@@ -61,8 +61,8 @@ export default function AboutPage() {
           </ul>
         </section>
 
-        <section className="bg-surface rounded-lg border border-gray-200 p-6">
-          <h2 className="font-serif text-xl font-semibold text-primary mb-3">
+        <section className="bg-surface rounded-lg border border-gray-200 p-4 md:p-6">
+          <h2 className="font-serif text-lg md:text-xl font-semibold text-primary mb-3">
             Contact
           </h2>
           <p>

@@ -61,8 +61,8 @@ export default async function CurrentPage(props: {
     await getJournals(searchParams);
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-12">
-      <h1 className="font-serif text-3xl font-bold text-primary mb-8">
+    <div className="max-w-6xl mx-auto px-4 py-6 md:py-12">
+      <h1 className="font-serif text-2xl md:text-3xl font-bold text-primary mb-8">
         Current Issue
       </h1>
 
@@ -135,7 +135,7 @@ export default async function CurrentPage(props: {
           </div>
 
           {pagination.totalPages > 1 && (
-            <div className="flex justify-center gap-2 mt-8">
+            <div className="flex flex-wrap justify-center gap-2 mt-8">
               {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map(
                 (p) => {
                   const params = new URLSearchParams();

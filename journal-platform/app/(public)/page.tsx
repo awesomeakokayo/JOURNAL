@@ -16,7 +16,7 @@ export default async function HomePage() {
   const journals = await getRecentJournals();
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-12">
+    <div className="max-w-4xl mx-auto px-4 py-6 md:py-12">
       {/* Search Bar */}
       <form method="GET" action="/current" className="mb-12">
         <div className="relative">
@@ -37,14 +37,14 @@ export default async function HomePage() {
             type="text"
             name="q"
             placeholder="Search by title or author..."
-            className="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+            className="w-full pl-12 pr-4 py-3 md:py-4 border border-gray-300 rounded-lg text-base md:text-lg focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
           />
         </div>
       </form>
 
       {/* Current Issue */}
       <section>
-        <h1 className="font-serif text-3xl font-bold text-primary mb-2">
+        <h1 className="font-serif text-2xl md:text-3xl font-bold text-primary mb-2">
           Current Issue
         </h1>
         <p className="text-text-muted mb-8">

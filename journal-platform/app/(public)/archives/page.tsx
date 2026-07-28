@@ -25,8 +25,8 @@ export default async function ArchivesPage() {
   const grouped = await getJournalsByVolume();
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-12">
-      <h1 className="font-serif text-3xl font-bold text-primary mb-8">
+    <div className="max-w-6xl mx-auto px-4 py-6 md:py-12">
+      <h1 className="font-serif text-2xl md:text-3xl font-bold text-primary mb-8">
         Archives
       </h1>
 
@@ -35,10 +35,10 @@ export default async function ArchivesPage() {
           <p className="text-text-muted text-lg">No journals published yet.</p>
         </div>
       ) : (
-        <div className="grid gap-10">
+        <div className="grid gap-6 md:gap-10">
           {Object.entries(grouped).map(([vol, journals]) => (
             <section key={vol}>
-              <h2 className="font-serif text-2xl font-semibold text-primary mb-4 border-b border-gray-200 pb-2">
+              <h2 className="font-serif text-xl md:text-2xl font-semibold text-primary mb-4 border-b border-gray-200 pb-2">
                 {vol}
                 <span className="text-text-muted text-base font-normal ml-2">
                   ({journals.length} journal{journals.length !== 1 ? "s" : ""})

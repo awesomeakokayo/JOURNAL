@@ -90,8 +90,8 @@ export default function AdminDashboardPage() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-12">
-      <h1 className="font-serif text-3xl font-bold text-primary mb-8">
+    <div className="max-w-6xl mx-auto px-4 py-6 md:py-12">
+      <h1 className="font-serif text-2xl md:text-3xl font-bold text-primary mb-8">
         Submission Queue
       </h1>
 
@@ -126,7 +126,7 @@ export default function AdminDashboardPage() {
               key={s.id}
               className="bg-surface rounded-lg border border-gray-200 p-5"
             >
-              <div className="flex items-start justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between">
                 <div className="flex-1">
                   <h2 className="font-serif text-lg font-semibold text-primary">
                     {s.title}
@@ -141,7 +141,7 @@ export default function AdminDashboardPage() {
                     </span>
                   )}
                 </div>
-                <div className="flex items-center gap-2 shrink-0 ml-4">
+                <div className="flex flex-wrap items-center gap-2 mt-3 sm:mt-0">
                   {s.status === "pending" && (
                     <>
                       <button

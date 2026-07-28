@@ -69,7 +69,7 @@ export default function AdminJournalDetailPage() {
 
   if (loading) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-12">
+      <div className="max-w-4xl mx-auto px-4 py-6 md:py-12">
         <p className="text-text-muted text-center">Loading...</p>
       </div>
     );
@@ -77,7 +77,7 @@ export default function AdminJournalDetailPage() {
 
   if (!journal) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-12">
+      <div className="max-w-4xl mx-auto px-4 py-6 md:py-12">
         <p className="text-text-muted text-center">Journal not found.</p>
       </div>
     );
@@ -85,11 +85,11 @@ export default function AdminJournalDetailPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-12">
-      <article className="bg-surface rounded-lg border border-gray-200 p-8">
-        <h1 className="font-serif text-3xl font-bold text-primary mb-3">
+      <article className="bg-surface rounded-lg border border-gray-200 p-4 md:p-8">
+        <h1 className="font-serif text-2xl md:text-3xl font-bold text-primary mb-3">
           {journal.title}
         </h1>
-        <p className="text-text-muted text-lg mb-4">{journal.authors}</p>
+        <p className="text-text-muted text-base md:text-lg mb-4">{journal.authors}</p>
         {journal.volume && (
           <span className="inline-block bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium mb-6">
             {journal.volume}

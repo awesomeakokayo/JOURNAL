@@ -42,8 +42,8 @@ export default function AdminUploadPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-12">
-      <h1 className="font-serif text-3xl font-bold text-primary text-center mb-8">
+    <div className="max-w-2xl mx-auto px-4 py-6 md:py-12">
+      <h1 className="font-serif text-2xl md:text-3xl font-bold text-primary text-center mb-8">
         Upload Published Journal
       </h1>
 
@@ -137,7 +137,7 @@ export default function AdminUploadPage() {
               <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
               <div>
                 <p className="text-sm font-medium text-primary">{step}</p>
-                <div className="w-48 h-1.5 bg-gray-200 rounded-full mt-1 overflow-hidden">
+                <div className="w-full max-w-48 h-1.5 bg-gray-200 rounded-full mt-1 overflow-hidden">
                   <div className="h-full bg-accent rounded-full animate-pulse" style={{ width: "60%" }} />
                 </div>
               </div>

@@ -32,10 +32,10 @@ export default async function DashboardPage() {
   const submissions = await getSubmissions(session.user.id);
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-12">
-      <div className="flex items-center justify-between mb-8">
+    <div className="max-w-4xl mx-auto px-4 py-6 md:py-12">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
         <div>
-          <h1 className="font-serif text-3xl font-bold text-primary">
+          <h1 className="font-serif text-2xl md:text-3xl font-bold text-primary">
             My Submissions
           </h1>
           <p className="text-text-muted mt-1">
@@ -69,7 +69,7 @@ export default async function DashboardPage() {
               key={s.id}
               className="bg-surface rounded-lg border border-gray-200 p-5"
             >
-              <div className="flex items-start justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between">
                 <div className="flex-1">
                   <h2 className="font-serif text-lg font-semibold text-primary">
                     {s.title}
@@ -81,7 +81,7 @@ export default async function DashboardPage() {
                     </span>
                   )}
                 </div>
-                <div className="flex items-center gap-2 shrink-0">
+                <div className="flex items-center gap-2 mt-3 sm:mt-0">
                   <a
                     href={`/api/submissions/${s.id}/download`}
                     target="_blank"

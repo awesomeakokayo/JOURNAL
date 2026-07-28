@@ -19,7 +19,7 @@ export default async function JournalDetailPage(props: {
   const journal = await getJournal(id);
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-12">
+    <div className="max-w-4xl mx-auto px-4 py-6 md:py-12">
       <Link
         href="/current"
         className="text-text-muted hover:text-primary text-sm mb-4 inline-block"
@@ -27,11 +27,11 @@ export default async function JournalDetailPage(props: {
         &larr; Back to Journals
       </Link>
 
-      <article className="bg-surface rounded-lg border border-gray-200 p-8">
-        <h1 className="font-serif text-3xl font-bold text-primary mb-3">
+      <article className="bg-surface rounded-lg border border-gray-200 p-4 md:p-8">
+        <h1 className="font-serif text-2xl md:text-3xl font-bold text-primary mb-3">
           {journal.title}
         </h1>
-        <p className="text-text-muted text-lg mb-4">{journal.authors}</p>
+        <p className="text-text-muted text-base md:text-lg mb-4">{journal.authors}</p>
 
         {journal.volume && (
           <span className="inline-block bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium mb-6">
@@ -48,7 +48,7 @@ export default async function JournalDetailPage(props: {
           </section>
         )}
 
-        <div className="flex items-center gap-4 pt-6 border-t border-gray-200">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 pt-6 border-t border-gray-200">
           <a
             href={`/api/journals/${journal.id}/download`}
             className="inline-flex items-center gap-2 bg-accent text-primary font-semibold px-6 py-2.5 rounded hover:bg-accent-light transition-colors"
