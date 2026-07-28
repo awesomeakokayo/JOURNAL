@@ -81,17 +81,27 @@ export default async function DashboardPage() {
                     </span>
                   )}
                 </div>
-                <span
-                  className={`text-xs font-medium px-3 py-1 rounded-full shrink-0 ${
-                    s.status === "approved"
-                      ? "bg-success/10 text-success"
-                      : s.status === "rejected"
-                      ? "bg-danger/10 text-danger"
-                      : "bg-pending/10 text-pending"
-                  }`}
-                >
-                  {s.status.charAt(0).toUpperCase() + s.status.slice(1)}
-                </span>
+                <div className="flex items-center gap-2 shrink-0">
+                  <a
+                    href={`/api/submissions/${s.id}/download`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary underline text-xs hover:text-primary-light"
+                  >
+                    Download
+                  </a>
+                  <span
+                    className={`text-xs font-medium px-3 py-1 rounded-full ${
+                      s.status === "approved"
+                        ? "bg-success/10 text-success"
+                        : s.status === "rejected"
+                        ? "bg-danger/10 text-danger"
+                        : "bg-pending/10 text-pending"
+                    }`}
+                  >
+                    {s.status.charAt(0).toUpperCase() + s.status.slice(1)}
+                  </span>
+                </div>
               </div>
               <p className="text-text-muted text-xs mt-3">
                 Submitted{" "}

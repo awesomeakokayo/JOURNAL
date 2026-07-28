@@ -105,7 +105,7 @@ export default function AdminJournalDetailPage() {
         )}
         <div className="flex items-center gap-4 pt-6 border-t border-gray-200">
           <a
-            href={journal.filePath}
+            href={`/api/journals/${journal.id}/download`}
             target="_blank"
             rel="noopener noreferrer"
             className="bg-accent text-primary font-semibold px-5 py-2 rounded hover:bg-accent-light transition-colors"

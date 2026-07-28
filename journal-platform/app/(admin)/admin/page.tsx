@@ -158,14 +158,18 @@ export default function AdminDashboardPage() {
                       </button>
                     </>
                   )}
-                  <a
-                    href={s.filePath}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary underline text-xs"
+                  <button
+                    onClick={() => {
+                      const token = localStorage.getItem("admin_token");
+                      window.open(
+                        `/api/submissions/${s.id}/download?token=${token}`,
+                        "_blank"
+                      );
+                    }}
+                    className="text-primary underline text-xs hover:text-primary-light cursor-pointer"
                   >
-                    View File
-                  </a>
+                    Download
+                  </button>
                 </div>
               </div>
               <p className="text-text-muted text-xs mt-3">
