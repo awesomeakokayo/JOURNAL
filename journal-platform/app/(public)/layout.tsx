@@ -18,7 +18,7 @@ export default async function PublicLayout({
             className="flex items-center gap-2 font-serif text-lg md:text-2xl font-bold tracking-tight"
           >
             <img src="/CCULOGO.png" alt="CCU Logo" className="h-8 md:h-10 w-auto" />
-            <span className="hidden sm:inline">CCU Journal of Education</span>
+            <span className="hidden sm:inline">CCU Journal of Science</span>
             <span className="sm:hidden">CCU Journal</span>
           </Link>
 
@@ -79,7 +79,7 @@ export default async function PublicLayout({
       <footer className="bg-primary text-white text-center text-sm py-6">
         <div className="max-w-6xl mx-auto px-4">
           <p className="font-serif text-base md:text-lg mb-1">
-            Coal City University Journal of Education
+            Coal City University Journal of Science
           </p>
           <p className="text-white/70">
             &copy; {new Date().getFullYear()} Coal City University, Enugu. All rights reserved.
