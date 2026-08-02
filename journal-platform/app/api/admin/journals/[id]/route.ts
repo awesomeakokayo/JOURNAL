@@ -108,6 +108,30 @@ export async function PATCH(
       return NextResponse.json({ success: true });
     }
 
+    if (body.action === "update") {
+      const { title, authors, abstract, volume } = body;
+
+      const journal = await prisma.journal.findUnique({ where: { id } });
+      if (!journal) {
+        return NextResponse.json({ error: "Journal not found" }, { status: 404 });
+      }
+
+      await prisma.journal.update({
+        where: { id },
+        data: {
+          ...(title !== undefined && { title }),
+          ...(authors !== undefined && { authors }),
+          ...(abstract !== undefined && { abstract }),
+          ...(volume !== undefined && { volume: volume || null }),
+        },
+      });
+
+      revalidatePath("/");
+      revalidatePath("/current");
+      revalidatePath("/archives");
+      return NextResponse.json({ success: true });
+    }
+
     return NextResponse.json({ error: "Invalid action" }, { status: 400 });
   } catch {
     return NextResponse.json(
